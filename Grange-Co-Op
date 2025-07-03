@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Grange Co-op SEO Strategy Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2d5a27 0%, #56ab2f 50%, #a8e6cf 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #2d5a27;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(45, 90, 39, 0.1), transparent);
+            animation: shimmer 4s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            color: #2d5a27;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #2d5a27, #56ab2f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .subtitle {
+            font-size: 1.3em;
+            color: #56ab2f;
+            font-weight: bold;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: #7f8c8d;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .heritage-banner {
+            background: linear-gradient(135deg, #d4a574, #f4e4bc);
+            color: #2d5a27;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            border: 2px solid #2d5a27;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .heritage-banner::before {
+            content: '🌾';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 2em;
+            animation: sway 3s ease-in-out infinite;
+        }
+
+        .heritage-banner::after {
+            content: '🚜';
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 2em;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .heritage-banner h3 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 5px solid #56ab2f;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h3 {
+            color: #2d5a27;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 3px solid #56ab2f;
+            padding-bottom: 10px;
+        }
+
+        .metric-highlight {
+            background: linear-gradient(135deg, #56ab2f, #2d5a27);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+            animation: pulse 2s infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-highlight::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: slide 3s infinite;
+        }
+
+        @keyframes slide {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .metric-highlight h4 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .metric-highlight p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+
+        .chart-container canvas {
+            max-height: 300px;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border: 2px solid #56ab2f;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            color: #555;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #56ab2f, #2d5a27);
+            color: white;
+        }
+
+        .tab:hover {
+            background: rgba(86, 171, 47, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border: 2px solid #56ab2f;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .strategy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .strategy-card {
+            background: #f8fdf6;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #56ab2f;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .strategy-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 49%, rgba(86, 171, 47, 0.05) 50%, transparent 51%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .strategy-card:hover::before {
+            opacity: 1;
+        }
+
+        .strategy-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(86, 171, 47, 0.2);
+        }
+
+        .strategy-card h4 {
+            color: #2d5a27;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .strategy-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .strategy-card li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e8f5e8;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .strategy-card li:before {
+            content: "🌱";
+            position: absolute;
+            left: 0;
+            top: 8px;
+        }
+
+        .business-lines {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .business-line {
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            font-weight: bold;
+        }
+
+        .business-line:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .business-line.feed { background: linear-gradient(135deg, #8B4513, #D2691E); }
+        .business-line.retail { background: linear-gradient(135deg, #228B22, #32CD32); }
+        .business-line.nursery { background: linear-gradient(135deg, #9ACD32, #ADFF2F); }
+        .business-line.services { background: linear-gradient(135deg, #4682B4, #87CEEB); }
+
+        .business-line h4 {
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+
+        .business-line p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .regional-map {
+            background: linear-gradient(135deg, #f0f8e8, #e8f5e8);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 2px solid #56ab2f;
+        }
+
+        .regional-map h3 {
+            color: #2d5a27;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+        }
+
+        .regions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .region {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #56ab2f;
+            transition: all 0.3s ease;
+        }
+
+        .region:hover {
+            box-shadow: 0 5px 20px rgba(86, 171, 47, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .region h4 {
+            color: #2d5a27;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .region ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .region li {
+            padding: 5px 0;
+            color: #555;
+        }
+
+        .seasonal-timeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .season {
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .season:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .season.spring { background: linear-gradient(135deg, #98FB98, #90EE90); }
+        .season.summer { background: linear-gradient(135deg, #FFD700, #FFA500); }
+        .season.fall { background: linear-gradient(135deg, #DEB887, #CD853F); }
+        .season.winter { background: linear-gradient(135deg, #87CEEB, #4682B4); }
+
+        .season h4 {
+            color: #2d5a27;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .season p {
+            margin-bottom: 10px;
+            color: #2d5a27;
+            font-weight: 500;
+        }
+
+        .roi-showcase {
+            background: linear-gradient(135deg, #2d5a27, #56ab2f);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .roi-showcase::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 15s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .roi-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .roi-metric {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .roi-metric h4 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .keyword-performance {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .keyword-category {
+            padding: 15px;
+            background: linear-gradient(135deg, #56ab2f, #a8e6cf);
+            color: white;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .keyword-category:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(86, 171, 47, 0.3);
+        }
+
+        .keyword-category h4 {
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .keyword-category p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .organic-badge {
+            background: linear-gradient(135deg, #228B22, #32CD32);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .organic-badge::before {
+            content: '🌿';
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: translateY(-50%) rotate(0deg); }
+            100% { transform: translateY(-50%) rotate(360deg); }
+        }
+
+        .organic-badge h3 {
+            margin: 0;
+            font-size: 1.4em;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .business-lines,
+            .seasonal-timeline,
+            .regions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>🌾 The Grange Co-op</h1>
+            <div class="subtitle">Farmer-Owned • Community-Focused • Since 1934</div>
+            <p>SEO Strategy Dashboard for Southern Oregon & Northern California's Premier Agricultural Cooperative</p>
+        </div>
+
+        <div class="heritage-banner">
+            <h3>90+ Years of Regional Agricultural Excellence</h3>
+            <p>From 99 Rogue Valley farmers in 1934 to a multi-million dollar cooperative serving the region</p>
+        </div>
+
+        <div class="organic-badge">
+            <h3>Only Certified Organic Mill in Southern Oregon</h3>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Market Authority -->
+            <div class="card">
+                <h3>Regional Market Authority</h3>
+                <div class="metric-highlight">
+                    <h4>90+</h4>
+                    <p>Years serving local farmers</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="marketShareChart"></canvas>
+                </div>
+                <div class="metric-highlight">
+                    <h4>Multi-Million</h4>
+                    <p>Dollar cooperative business</p>
+                </div>
+            </div>
+
+            <!-- Business Diversification -->
+            <div class="card">
+                <h3>Business Line Performance</h3>
+                <div class="chart-container">
+                    <canvas id="businessLinesChart"></canvas>
+                </div>
+                <div class="metric-highlight">
+                    <h4>4</h4>
+                    <p>Major business divisions</p>
+                </div>
+            </div>
+
+            <!-- Search Performance -->
+            <div class="card">
+                <h3>Top Keyword Categories</h3>
+                <div class="chart-container">
+                    <canvas id="keywordChart"></canvas>
+                </div>
+                <div class="keyword-performance">
+                    <div class="keyword-category">
+                        <h4>Pet Supplies</h4>
+                        <p>"Best Pet Store" Winner</p>
+                    </div>
+                    <div class="keyword-category">
+                        <h4>Organic Feed</h4>
+                        <p>Rogue Quality Feeds</p>
+                    </div>
+                    <div class="keyword-category">
+                        <h4>Garden Center</h4>
+                        <p>Planting Day Events</p>
+                    </div>
+                    <div class="keyword-category">
+                        <h4>Farm Supplies</h4>
+                        <p>Regional Authority</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Community Engagement -->
+            <div class="card">
+                <h3>Community Engagement Impact</h3>
+                <div class="chart-container">
+                    <canvas id="engagementChart"></canvas>
+                </div>
+                <div class="metric-highlight">
+                    <h4>High</h4>
+                    <p>Local search visibility from events</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Business Lines Overview -->
+        <div class="business-lines">
+            <div class="business-line feed">
+                <h4>🌾 Feed Mill Operations</h4>
+                <p>Rogue Quality Feeds for multiple livestock types. Only certified organic mill in the region.</p>
+            </div>
+            <div class="business-line retail">
+                <h4>🏪 Retail Operations</h4>
+                <p>Farm supplies, garden center, pet supplies, work wear, and hardware.</p>
+            </div>
+            <div class="business-line nursery">
+                <h4>🌱 Garden & Nursery</h4>
+                <p>Plant nursery, annuals, perennials, shade trees, and gardening supplies.</p>
+            </div>
+            <div class="business-line services">
+                <h4>🔬 Professional Services</h4>
+                <p>Soil testing, field consultations, expert agricultural advice.</p>
+            </div>
+        </div>
+
+        <!-- Regional Map -->
+        <div class="regional-map">
+            <h3>Service Area Coverage</h3>
+            <div class="regions">
+                <div class="region">
+                    <h4>🏔️ Southern Oregon</h4>
+                    <ul>
+                        <li>Medford (Headquarters)</li>
+                        <li>Ashland</li>
+                        <li>Grants Pass</li>
+                        <li>Klamath Falls</li>
+                        <li>Rogue Valley Region</li>
+                    </ul>
+                </div>
+                <div class="region">
+                    <h4>🌲 Northern California</h4>
+                    <ul>
+                        <li>Yreka</li>
+                        <li>Mount Shasta</li>
+                        <li>Redding (New Store)</li>
+                        <li>Regional Agricultural Areas</li>
+                        <li>Rural Farming Communities</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Strategy Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('cooperative-seo')">Cooperative SEO</button>
+            <button class="tab" onclick="showTab('local-authority')">Local Authority</button>
+            <button class="tab" onclick="showTab('b2b-b2c')">B2B & B2C</button>
+            <button class="tab" onclick="showTab('community')">Community Events</button>
+            <button class="tab" onclick="showTab('seasonal')">Seasonal Strategy</button>
+            <button class="tab" onclick="showTab('organic')">Organic Positioning</button>
+        </div>
+
+        <!-- Cooperative SEO Tab -->
+        <div id="cooperative-seo" class="tab-content active">
+            <h3>Cooperative Business Model SEO</h3>
+            <div class="strategy-grid">
+                <div class="strategy-card">
+                    <h4>Farmer-Owned Authority</h4>
+                    <ul>
+                        <li>Highlight 90+ years of farmer ownership</li>
+                        <li>Emphasize community investment</li>
+                        <li>Showcase local decision-making</li>
+                        <li>Feature founding farmer stories</li>
+                        <li>Cooperative vs corporate messaging</li>
+                    </ul>
+                </div>
+                <div class="strategy-card">
+                    <h4>Regional Expertise</h4>
+                    <ul>
+                        <li>Southern Oregon agricultural knowledge</li>
+                        <li>Local growing condition expertise</li>
+                        <li>Climate-specific recommendations</li>
+                        <li>Regional crop optimization</li>
+                        <li>Local farmer success stories</li>
+                    </ul>
+                </div>
+                <div class="strategy-card">
+                    <h4>Unique Positioning</h4>
+                    <ul>
+                        <li>Only certified organic mill</li>
+                        <li>Multi-generational relationships</li>
+                        <li>Local production capabilities</li>
+                        <li>Community reinvestment</li>
+                        <li>Farmer-to-farmer service</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Local Authority Tab -->
+        <div id="local-authority" class="tab-content">
+            <h3>Regional Authority Building</h3>
+            <div class="strategy-grid">
+                <div class="strategy-card">
+                    <h4>Geographic SEO</h4>
+                    <ul>
+                        <li>"Medford farm supplies"</li>
+                        <li>"Southern Oregon feed mill"</li>
+                        <li>"Rogue Valley agricultural"</li>
+                        <li>"Grants Pass garden center"</li>
+                        <li>"Ashland organic feed"</li>
+                    </ul>
+                </div>
+                <div class="strategy-card">
+                    <h4>Local Content Strategy</h4>
+                    <ul>
+                        <li>Regional growing guides</li>
+                        <li>Local weather challenges</li>
+                        <li>Area-specific crop advice</li>
+                        <li>Community event coverage</li>
+                        <li>Local farmer spotlights</li>
+                    </ul>
+                </div>
+                <div class="strategy-card">
+                    <h4>Partnership Highlighting</h4>
+                    <ul>
+                        <li>Local farmer relationships</li>
+                        <li>Agricultural organization ties</li>
+                        <li>Community involvement</li>
+                        <li>Extension service partnerships</li>
+                        <li>Regional certification programs</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- B2B & B2C Tab -->
+        <div id="b2b-b2c" class="tab-content">
+            <h3>Dual Market Optimization</h3>
+            <div class="strategy-grid">
+                <div class="strategy-card">
+                    <h4>B2B Agricultural Services</h4>
+                    <ul>
+                        <li>Commercial farmer targeting</li>
+                        <li>Ranch operation services</li>
+                        <li>Bulk feed & fertilizer</li>
+                        <li>Professional consultation</li>
+                        <li>Landscaper partnerships</li>
+                    </ul>
+                </div>
+                <div class="strategy-card">
+                    <h4>B2C Retail Optimization</h4>
+                    <ul>
+                        <li>Garden center consumers</li>
+                        <li>Pet supply customers</li>
+                        <li>Home gardening enthusiasts</li>
+                        <li>DIY project supplies</li>
+                        <li>Family farm customers</li>
+                    </ul>
+                </div>
+                <div class="strategy-card">
+                    <h4>Cross-Selling Opportunities</h4>
+                    <ul>
+                        <li>Professional to retail conversion</li>
+                        <li>Seasonal service expansion</li>
+                        <li>Educational content bridging</li>
+                        <li>Community event cross-promotion</li>
+                        <li>Multi-category optimization</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Community Events Tab -->
+        <div id="community" class="tab-content">
+            <h3>Community Engagement SEO</h3>
+            <div class="strategy-grid">
+                <div class="strategy-card">
+                    <h4>Annual Events</h4>
+                    <ul>
+                        <li>Planting Day optimization</li>
+                        <li>Tree giveaway events</li>
+                        <li>Pet adoption drives</li>
+                        <li>Agricultural fairs</li>
+                        <li>Educational workshops</li>
+                    </ul>
+                </div>
+                <div class="strategy-card">
+                    <h4>Event-Based Keywords</h4>
+                    <ul>
+                        <li>"Grange planting day 2025"</li>
+                        <li>"Free tree giveaway Oregon"</li>
+                        <li>"Pet adoption Medford"</li>
+                        <li>"Agricultural workshop"</li>
+                        <li>"Community garden event"</li>
+                    </ul>
+                </div>
+                <div class="strategy-card">
+                    <h4>Local Media Coverage</h4>
+                    <ul>
+                        <li>Press release optimization</li>
+                        <li>Local news partnerships</li>
+                        <li>Social media amplification</li>
+                        <li>Community calendar listings</li>
+                        <li>Event photography & content</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seasonal Strategy Tab -->
+        <div id="seasonal" class="tab-content">
+            <h3>Agricultural Seasonal SEO</h3>
+            <div class="seasonal-timeline">
+                <div class="season spring">
+                    <h4>🌸 Spring (Peak Planting)</h4>
+                    <p><strong>Focus:</strong> Planting Day, soil prep, seeds</p>
+                    <p><strong>Keywords:</strong> "spring planting", "garden preparation"</p>
+                    <p><strong>Events:</strong> Major Planting Day event</p>
+                </div>
+                <div class="season summer">
+                    <h4>☀️ Summer (Growth Season)</h4>
+                    <p><strong>Focus:</strong> Fertilizers, pest control, irrigation</p>
+                    <p><strong>Keywords:</strong> "summer fertilizer", "crop protection"</p>
+                    <p><strong>Content:</strong> Growing guides, maintenance tips</p>
+                </div>
+                <div class="season fall">
+                    <h4>🍂 Fall (Harvest & Prep)</h4>
+                    <p><strong>Focus:</strong> Harvest supplies, winter prep</p>
+                    <p><strong>Keywords:</strong> "fall fertilizer", "winter preparation"</p>
+                    <p><strong>Events:</strong> Harvest celebrations</p>
+                </div>
+                <div class="season winter">
+                    <h4>❄️ Winter (Planning Season)</h4>
+                    <p><strong>Focus:</strong> Feed supplies, planning, education</p>
+                    <p><strong>Keywords:</strong> "livestock feed", "next season planning"</p>
+                    <p><strong>Content:</strong> Educational workshops</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Organic Positioning Tab -->
+        <div id="organic" class="tab-content">
+            <h3>Organic & Sustainable Positioning</h3>
+            <div class="strategy-grid">
+                <div class="strategy-card">
+                    <h4>Organic Certification</h4>
+                    <ul>
+                        <li>Only certified organic mill messaging</li>
+                        <li>Organic feed production</li>
+                        <li>Certification process education</li>
+                        <li>Organic vs conventional content</li>
+                        <li>Quality assurance messaging</li>
+                    </ul>
+                </div>
+                <div class="strategy-card">
+                    <h4>Sustainability Focus</h4>
+                    <ul>
+                        <li>Environmental stewardship</li>
+                        <li>Sustainable farming practices</li>
+                        <li>Local production benefits</li>
+                        <li>Carbon footprint reduction</li>
+                        <li>Regenerative agriculture</li>
+                    </ul>
+                </div>
+                <div class="strategy-card">
+                    <h4>Organic Keywords</h4>
+                    <ul>
+                        <li>"organic feed Southern Oregon"</li>
+                        <li>"certified organic mill"</li>
+                        <li>"organic fertilizer Rogue Valley"</li>
+                        <li>"sustainable farming supplies"</li>
+                        <li>"organic livestock feed"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROI Showcase -->
+        <div class="roi-showcase">
+            <h3>Cooperative SEO Growth Projections</h3>
+            <div class="roi-metrics">
+                <div class="roi-metric">
+                    <h4>300%+</h4>
+                    <p>Organic Traffic Increase Potential</p>
+                </div>
+                <div class="roi-metric">
+                    <h4>$25,000</h4>
+                    <p>Monthly B2B Lead Value</p>
+                </div>
+                <div class="roi-metric">
+                    <h4>89%</h4>
+                    <p>Local Search Dominance</p>
+                </div>
+                <div class="roi-metric">
+                    <h4>4 States</h4>
+                    <p>Regional Market Coverage</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chart configurations
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(45, 90, 39, 0.9)',
+                    titleColor: 'white',
+                    bodyColor: 'white',
+                    borderColor: 'rgba(86, 171, 47, 0.8)',
+                    borderWidth: 2,
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(86, 171, 47, 0.1)'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(86, 171, 47, 0.1)'
+                    }
+                }
+            }
+        };
+
+        // Market Share Chart
+        const marketShareCtx = document.getElementById('marketShareChart').getContext('2d');
+        new Chart(marketShareCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Grange Co-op Market Share', 'Other Competitors'],
+                datasets: [{
+                    data: [45, 55],
+                    backgroundColor: ['#56ab2f', '#ecf0f1'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+
+        // Business Lines Performance Chart
+        const businessLinesCtx = document.getElementById('businessLinesChart').getContext('2d');
+        new Chart(businessLinesCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Feed Mill', 'Retail', 'Garden Center', 'Services'],
+                datasets: [{
+                    label: 'Revenue Contribution %',
+                    data: [35, 30, 25, 10],
+                    backgroundColor: ['#8B4513', '#228B22', '#9ACD32', '#4682B4'],
+                    borderWidth: 0
+                }]
+            },
+            options: chartOptions
+        });
+
+        // Keyword Performance Chart
+        const keywordCtx = document.getElementById('keywordChart').getContext('2d');
+        new Chart(keywordCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Pet Supplies', 'Farm Feed', 'Garden Center', 'Hardware', 'Organic Products', 'Community Events'],
+                datasets: [{
+                    label: 'Search Volume Score',
+                    data: [90, 95, 85, 70, 88, 75],
+                    borderColor: '#56ab2f',
+                    backgroundColor: 'rgba(86, 171, 47, 0.2)',
+                    pointBackgroundColor: '#56ab2f'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        // Community Engagement Chart
+        const engagementCtx = document.getElementById('engagementChart').getContext('2d');
+        new Chart(engagementCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Community Event Search Volume',
+                    data: [20, 25, 85, 95, 90, 60, 55, 50, 65, 70, 45, 35],
+                    borderColor: '#56ab2f',
+                    backgroundColor: 'rgba(86, 171, 47, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: chartOptions
+        });
+
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Add interactive hover effects
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Add click animations to metric highlights
+        document.querySelectorAll('.metric-highlight').forEach(metric => {
+            metric.addEventListener('click', function() {
+                this.style.animation = 'none';
+                setTimeout(() => {
+                    this.style.animation = 'pulse 1s ease-in-out';
+                }, 10);
+            });
+        });
+
+        // Add seasonal timeline hover effects
+        document.querySelectorAll('.season').forEach(season => {
+            season.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05) rotate(1deg)';
+            });
+            
+            season.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1) rotate(0deg)';
+            });
+        });
+    </script>
+</body>
+</html>
