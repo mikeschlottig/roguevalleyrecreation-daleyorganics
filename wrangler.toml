@@ -6,16 +6,6 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 ENVIRONMENT = "production"
 
-# Static assets configuration
-[site]
-bucket = "./"
-entry-point = "workers-site"
-
-# Routes configuration
-routes = [
-  { pattern = "roguevalleyrecreation-daleyorganics.mikeschlottig.dev/*", zone_name = "mikeschlottig.dev" }
-]
-
 # Build configuration
 [build]
 command = "npm run build"
