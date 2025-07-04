@@ -1,0 +1,25 @@
+{
+  "name": "roguevalleyrecreation-daleyorganics",
+  "version": "1.0.0",
+  "description": "Community and locally focused posts to add SEO value to Daley Organics",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "echo 'Building Cloudflare Worker...' && exit 0",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "start": "wrangler dev",
+    "tail": "wrangler tail"
+  },
+  "keywords": [
+    "cloudflare-workers",
+    "rogue-valley",
+    "daley-organics",
+    "local-seo"
+  ],
+  "author": "Mike Schlottig",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  },
+  "dependencies": {}
+}
