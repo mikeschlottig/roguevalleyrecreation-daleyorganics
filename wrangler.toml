@@ -1,4 +1,4 @@
-name = "roguevalleyrecreation-daleyorganics"
+name = "roguevalley-recreation-daleyorganics"
 main = "src/index.js"
 compatibility_date = "2024-07-04"
 compatibility_flags = ["nodejs_compat"]
